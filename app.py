@@ -56,9 +56,14 @@ with app.app_context():
     db.create_all()
 
 @app.route('/', methods=['GET'])
-def main_route():
-    return "hello world"
+def get_projects():
+    # Retrieve a list of Project objects from the database
+    projects = Project.query.all()
 
+    # Use the class method to convert Project objects to dictionaries
+    project_dicts = Project.projects_to_dicts(projects)
+
+    return jsonify(project_dicts), 200
 
 @app.route('/project', methods=['POST'])
 def add_project():
@@ -75,16 +80,6 @@ def add_project():
     db.session.commit()
 
     return jsonify(new_project.as_dict())
-
-@app.route('/projects', methods=['GET'])
-def get_projects():
-    # Retrieve a list of Project objects from the database
-    projects = Project.query.all()
-
-    # Use the class method to convert Project objects to dictionaries
-    project_dicts = Project.projects_to_dicts(projects)
-
-    return jsonify(project_dicts), 200
 
 @app.route('/project/<id>', methods=['GET'])
 def get_project(id):
