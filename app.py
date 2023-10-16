@@ -78,7 +78,7 @@ def add_project():
     new_project = Project(project_name, start_date, end_date, notes, supplies, image)
   
     db.session.add(new_project)
-    db.session.commit()
+    
 
     return jsonify(new_project.as_dict())
 
