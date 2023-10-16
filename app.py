@@ -55,6 +55,7 @@ class Project(db.Model):
 with app.app_context():
     db.create_all()
 
+
 @app.route('/', methods=['GET'])
 def get_projects():
     # Retrieve a list of Project objects from the database
