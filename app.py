@@ -8,9 +8,8 @@ from flask_cors import CORS
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app, methods="*", origins="*")
+CORS(app, origins="*", methods=["GET", "POST", "PUT", "DELETE"])
 
-app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['SQLALCHEMY_DATABASE_URI'] =  os.environ.get("DATABASE_URL",None)
 db = SQLAlchemy(app) 
 
