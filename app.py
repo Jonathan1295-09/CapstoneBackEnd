@@ -1,23 +1,22 @@
 from dotenv import load_dotenv
 from datetime import datetime
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 import os
-from flask_cors import CORS
+# from flask_cors import CORS
 
 load_dotenv()
 
-def allow_all_cors(app):
-    @app.after_request
-    def set_cors_headers(response):
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        response.headers['Access-Control-Allow-Methods'] = '*'
-        response.headers['Access-Control-Allow-Headers'] = '*'
-        return response
+def cors_headers(data):
+    response = make_response(jsonify(data))
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = '*'
+    return response
     
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "PUT", "DELETE"]}})
-allow_all_cors(app)
+# CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "PUT", "DELETE"]}})
+
 
 app.config['SQLALCHEMY_DATABASE_URI'] =  os.environ.get("DATABASE_URL",None)
 db = SQLAlchemy(app) 
@@ -73,7 +72,7 @@ def get_projects():
     # Use the class method to convert Project objects to dictionaries
     project_dicts = Project.projects_to_dicts(projects)
 
-    return jsonify(project_dicts), 200
+    return cors_headers(project_dicts), 200
 
 @app.route('/project', methods=['POST'])
 def add_project():
@@ -89,7 +88,7 @@ def add_project():
     db.session.add(new_project)
     
 
-    return jsonify(new_project.as_dict())
+    return cors_headers(new_project.as_dict())
 
 @app.route('/project/<id>', methods=['GET'])
 def get_project(id):
@@ -97,9 +96,9 @@ def get_project(id):
 
     if project is not None:
         project_dict = project.as_dict()
-        return jsonify(project_dict), 200
+        return cors_headers(project_dict), 200
     else:
-        return jsonify({"error": "Project not found"}), 404
+        return cors_headers({"error": "Project not found"}), 404
     
 @app.route('/project/<id>', methods=['PUT'])
 def update_project(id):
@@ -116,7 +115,7 @@ def update_project(id):
 
     db.session.commit()
 
-    return jsonify(update_project.as_dict())
+    return cors_headers(update_project.as_dict())
 
 @app.route('/project/<id>', methods=['DELETE'])
 def delete_project(id):
@@ -125,9 +124,9 @@ def delete_project(id):
     if project is not None:
         db.session.delete(project)
         db.session.commit()
-        return jsonify({"message": "Project deleted successfully"}), 200
+        return cors_headers({"message": "Project deleted successfully"}), 200
     else:
-        return jsonify({"error": "Project not found"}, 404)
+        return cors_headers({"error": "Project not found"}, 404)
 
 if __name__ == '__main__':
      app.run(debug=True,port=os.environ.get("PORT", 4444))
