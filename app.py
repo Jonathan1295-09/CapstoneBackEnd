@@ -6,7 +6,7 @@ import os
 from flask_cors import CORS, cross_origin
 
 load_dotenv()
-    
+print(CORS)
 app = Flask(__name__)
 CORS(app)
 
@@ -83,6 +83,7 @@ def add_project():
     new_project = Project(project_name, start_date, end_date, notes, supplies, image)
   
     db.session.add(new_project)
+    db.session.commit()
     
 
     return jsonify(new_project.as_dict())
@@ -99,6 +100,7 @@ def get_project(id):
         return jsonify({"error": "Project not found"}), 404
     
 @app.route('/project/<id>', methods=['PUT'])
+@cross_origin()
 def update_project(id):
     project = Project.query.get(id)
 
@@ -109,11 +111,17 @@ def update_project(id):
     supplies = request.json['supplies']
     image = request.json['image']
 
-    update_project = Project(project_name, start_date, end_date, notes, supplies, image)
+    project.project_name = project_name
+    project.start_date = start_date
+    project.end_date = end_date
+    project.notes = notes
+    project.supplies = supplies
+    project.image = image
+    
 
     db.session.commit()
 
-    return jsonify(update_project.as_dict())
+    return jsonify(project.as_dict())
 
 @app.route('/project/<id>', methods=['DELETE'])
 @cross_origin()
