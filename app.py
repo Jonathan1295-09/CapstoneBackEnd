@@ -66,7 +66,7 @@ def get_projects():
 
     return jsonify(project_dicts), 200
 
-@app.route('/project', methods=['POST'])
+@app.route('/project', methods=['GET', 'POST'])
 def add_project():
     project_name = request.json['project_name']
     start_date = request.json['start_date']
@@ -109,7 +109,7 @@ def update_project(id):
 
     return jsonify(update_project.as_dict())
 
-@app.route('/project/<id>', methods=['DELETE'])
+@app.route('/project/<id>', methods=['DELETE', 'POST'])
 def delete_project(id):
     project = Project.query.get(id)
 
