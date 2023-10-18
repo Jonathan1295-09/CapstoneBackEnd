@@ -2,8 +2,8 @@
 
 - **Project Name:** Project Planner
 - **Project By:** Jonathan Casasola
-- [**Link To  Frontend GITHUB**] (https://github.com/Jonathan1295-09/CapstoneFrontEnd)
-- [**LINK TO DEPLOYED WEBSITE**] (https://capstonebackend-dfm2.onrender.com)
+- [**Link To  Frontend GITHUB**](https://github.com/Jonathan1295-09/CapstoneBackEnd)
+- [**LINK TO DEPLOYED WEBSITE**](https://capstonebackend-dfm2.onrender.com)
 - **List of technologies used** Python, flask, neon, postman
 - [**Link to Trello**]
 
