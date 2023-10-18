@@ -63,6 +63,14 @@ class Project(db.Model):
 with app.app_context():
     db.create_all()
 
+@app.route('/', methods=['OPTIONS'])
+def handle_options():
+    # Set CORS headers for the OPTIONS request
+    response = make_response()
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = '*'
+    return response
 
 @app.route('/', methods=['GET'])
 def get_projects():
