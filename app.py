@@ -3,11 +3,11 @@ from datetime import datetime
 from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 import os
-# from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 load_dotenv()
 
-def cors_headers(data):
+def jsonify(data):
     response = make_response(jsonify(data))
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Methods'] = '*'
@@ -15,7 +15,7 @@ def cors_headers(data):
     return response
     
 app = Flask(__name__)
-# CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "PUT", "DELETE"]}})
+CORS(app)
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] =  os.environ.get("DATABASE_URL",None)
@@ -63,16 +63,9 @@ class Project(db.Model):
 with app.app_context():
     db.create_all()
 
-@app.route('/', methods=['OPTIONS'])
-def handle_options():
-    # Set CORS headers for the OPTIONS request
-    response = make_response()
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Methods'] = '*'
-    response.headers['Access-Control-Allow-Headers'] = '*'
-    return response
 
 @app.route('/', methods=['GET'])
+@cross_origin()
 def get_projects():
     # Retrieve a list of Project objects from the database
     projects = Project.query.all()
@@ -80,9 +73,10 @@ def get_projects():
     # Use the class method to convert Project objects to dictionaries
     project_dicts = Project.projects_to_dicts(projects)
 
-    return cors_headers(project_dicts), 200
+    return jsonify(project_dicts), 200
 
 @app.route('/project', methods=['POST'])
+@cross_origin()
 def add_project():
     project_name = request.json['project_name']
     start_date = request.json['start_date']
@@ -96,17 +90,18 @@ def add_project():
     db.session.add(new_project)
     
 
-    return cors_headers(new_project.as_dict())
+    return jsonify(new_project.as_dict())
 
 @app.route('/project/<id>', methods=['GET'])
+@cross_origin()
 def get_project(id):
     project = Project.query.get(id)
 
     if project is not None:
         project_dict = project.as_dict()
-        return cors_headers(project_dict), 200
+        return jsonify(project_dict), 200
     else:
-        return cors_headers({"error": "Project not found"}), 404
+        return jsonify({"error": "Project not found"}), 404
     
 @app.route('/project/<id>', methods=['PUT'])
 def update_project(id):
@@ -123,18 +118,19 @@ def update_project(id):
 
     db.session.commit()
 
-    return cors_headers(update_project.as_dict())
+    return jsonify(update_project.as_dict())
 
 @app.route('/project/<id>', methods=['DELETE'])
+@cross_origin()
 def delete_project(id):
     project = Project.query.get(id)
 
     if project is not None:
         db.session.delete(project)
         db.session.commit()
-        return cors_headers({"message": "Project deleted successfully"}), 200
+        return jsonify({"message": "Project deleted successfully"}), 200
     else:
-        return cors_headers({"error": "Project not found"}, 404)
+        return jsonify({"error": "Project not found"}, 404)
 
 if __name__ == '__main__':
      app.run(debug=True,port=os.environ.get("PORT", 4444))
