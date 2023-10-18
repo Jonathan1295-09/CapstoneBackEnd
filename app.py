@@ -64,9 +64,11 @@ with app.app_context():
     db.create_all()
 
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['GET', "OPTIONS"])
 @cross_origin()
 def get_projects():
+    if(request.method=="OPTIONS"):
+        return make_response()
     # Retrieve a list of Project objects from the database
     projects = Project.query.all()
 
