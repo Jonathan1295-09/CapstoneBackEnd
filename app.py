@@ -6,13 +6,6 @@ import os
 from flask_cors import CORS, cross_origin
 
 load_dotenv()
-
-def jsonify(data):
-    response = make_response(jsonify(data))
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Methods'] = '*'
-    response.headers['Access-Control-Allow-Headers'] = '*'
-    return response
     
 app = Flask(__name__)
 CORS(app)
