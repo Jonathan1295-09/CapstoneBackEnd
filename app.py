@@ -7,8 +7,17 @@ from flask_cors import CORS
 
 load_dotenv()
 
+def allow_all_cors(app):
+    @app.after_request
+    def set_cors_headers(response):
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = '*'
+        response.headers['Access-Control-Allow-Headers'] = '*'
+        return response
+    
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "PUT", "DELETE"]}})
+allow_all_cors(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] =  os.environ.get("DATABASE_URL",None)
 db = SQLAlchemy(app) 
